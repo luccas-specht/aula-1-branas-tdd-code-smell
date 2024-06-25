@@ -25,17 +25,17 @@ export async function signup(input: any): Promise<any> {
     return -3;
   }
 
-  const account = await getUserByEmail(input.email);
-  if (account) {
-    return -4;
-  }
-
   if (input.isDriver && !validateCarPlate({ plate: input.carPlate })) {
     return -5;
   }
 
   try {
-    const account = {
+    const account = await getUserByEmail(input.email);
+    if (account) {
+      return -4;
+    }
+
+    const newAccount = {
       name: input.name,
       email: input.email,
       cpf: input.cpf,
@@ -43,7 +43,7 @@ export async function signup(input: any): Promise<any> {
       isPassenger: input.isPassenger,
       isDriver: input.isDriver,
     };
-    const accountId = await insertUserIntoDatabase(account);
+    const accountId = await insertUserIntoDatabase(newAccount);
     return { accountId };
   } finally {
     await finishConnection();
