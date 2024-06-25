@@ -1,0 +1,6 @@
+[] - coneção no mesmo arquivo
+[] - repository na mesma classe
+[] - geração de id
+[] - validação de input na mesma classe
+[] - objeto sem sentido
+[] - tratativa de error hard code(criar handle errors)
