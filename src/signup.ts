@@ -45,7 +45,7 @@ export async function signup(input: any): Promise<any> {
     };
     const accountId = await insertUserIntoDatabase(newAccount);
     return { accountId };
-  } finally {
-    await finishConnection();
+  } catch (error) {
+    console.log({ error });
   }
 }

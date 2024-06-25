@@ -47,9 +47,7 @@ test('Should not insert driver user when cpf is invalid', async () => {
   expect(response).toEqual(-1);
 });
 
-/**
- * 
- * test.skip('Should not insert driver user when car plate is invalid', async () => {
+test('Should not insert driver user when car plate is invalid', async () => {
   const input = {
     name: 'Luccas Specht',
     email: 'luccas@gmai123.com',
@@ -62,5 +60,29 @@ test('Should not insert driver user when cpf is invalid', async () => {
   expect(response).toEqual(-5);
 });
 
- * 
- */
+test('Should insert driver user ', async () => {
+  const input = {
+    name: 'Luccas Specht',
+    email: `luccas@gmai123${Math.random()}.com`,
+    cpf: '037.106.150-46',
+    carPlate: 'ABC1234',
+    isPassenger: false,
+    isDriver: true,
+  };
+
+  const response = await signup(input);
+  expect(response.accountId).toBeDefined();
+});
+
+test('Should insert passenger user ', async () => {
+  const input = {
+    name: 'Luccas Specht',
+    email: `luccas@gmai123${Math.random()}.com`,
+    cpf: '037.106.150-46',
+    isPassenger: true,
+    isDriver: false,
+  };
+
+  const response = await signup(input);
+  expect(response.accountId).toBeDefined();
+});
