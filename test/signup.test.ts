@@ -10,8 +10,7 @@ test('Should not insert driver user when email already exists', async () => {
     isDriver: true,
   };
 
-  const response = await signup(input);
-  expect(response).toEqual(-4);
+  await expect(signup(input)).rejects.toThrow('Account already exists');
 });
 
 test('Should not insert driver user when name not matched', async () => {
@@ -21,8 +20,7 @@ test('Should not insert driver user when name not matched', async () => {
     email: 'luccassilva@gmail.com',
   };
 
-  const response = await signup(input);
-  expect(response).toEqual(-3);
+  await expect(signup(input)).rejects.toThrow('Invalid name');
 });
 
 test('Should not insert driver user when email is invalid', async () => {
@@ -32,8 +30,7 @@ test('Should not insert driver user when email is invalid', async () => {
     email: 'bob1111',
   };
 
-  const response = await signup(input);
-  expect(response).toEqual(-2);
+  await expect(signup(input)).rejects.toThrow('Invalid email');
 });
 
 test('Should not insert driver user when cpf is invalid', async () => {
@@ -43,8 +40,7 @@ test('Should not insert driver user when cpf is invalid', async () => {
     cpf: '12312',
   };
 
-  const response = await signup(input);
-  expect(response).toEqual(-1);
+  await expect(signup(input)).rejects.toThrow('Invalid cpf');
 });
 
 test('Should not insert driver user when car plate is invalid', async () => {
@@ -56,8 +52,7 @@ test('Should not insert driver user when car plate is invalid', async () => {
     isDriver: true,
   };
 
-  const response = await signup(input);
-  expect(response).toEqual(-5);
+  await expect(signup(input)).rejects.toThrow('Invalid car plate');
 });
 
 test('Should insert driver user ', async () => {

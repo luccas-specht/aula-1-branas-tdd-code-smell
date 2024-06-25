@@ -13,26 +13,26 @@ export async function signup(input: any): Promise<any> {
     databaseConnection: getConnection(),
   });
 
-  if (!validateCpf({ rawCpf: input.cpf })) {
-    return -1;
-  }
-
-  if (!validateEmail({ email: input.email })) {
-    return -2;
-  }
-
-  if (!validateName({ name: input.name })) {
-    return -3;
-  }
-
-  if (input.isDriver && !validateCarPlate({ plate: input.carPlate })) {
-    return -5;
-  }
-
   try {
+    if (!validateCpf({ rawCpf: input.cpf })) {
+      throw new Error('Invalid cpf');
+    }
+
+    if (!validateEmail({ email: input.email })) {
+      throw new Error('Invalid email');
+    }
+
+    if (!validateName({ name: input.name })) {
+      throw new Error('Invalid name');
+    }
+
+    if (input.isDriver && !validateCarPlate({ plate: input.carPlate })) {
+      throw new Error('Invalid car plate');
+    }
+
     const account = await getUserByEmail(input.email);
     if (account) {
-      return -4;
+      throw new Error('Account already exists');
     }
 
     const newAccount = {
@@ -46,6 +46,6 @@ export async function signup(input: any): Promise<any> {
     const accountId = await insertUserIntoDatabase(newAccount);
     return { accountId };
   } catch (error) {
-    console.log({ error });
+    throw error;
   }
 }
