@@ -1,9 +1,11 @@
 import crypto from 'crypto';
 import pgp from 'pg-promise';
-import { validateCpf } from './validateCpf';
+import { validateCpf } from './validations/validateCpf';
+import { validateName } from './validations/validateName';
+import { validateEmail } from './validations/validateEmail';
 
 export async function signup(input: any): Promise<any> {
-  const connection = pgp()('postgres://postgres:123456@localhost:5432/app');
+  const connection = pgp()('postgres://postgres:231123@localhost:5432/branas');
 
   try {
     const id = crypto.randomUUID();
@@ -12,9 +14,10 @@ export async function signup(input: any): Promise<any> {
       'select * from cccat17.account where email = $1',
       [input.email]
     );
+
     if (!acc) {
-      if (input.name.match(/[a-zA-Z] [a-zA-Z]+/)) {
-        if (input.email.match(/^(.+)@(.+)$/)) {
+      if (validateName({ name: input.name })) {
+        if (validateEmail({ email: input.email })) {
           if (validateCpf(input.cpf)) {
             if (input.isDriver) {
               if (input.carPlate.match(/[A-Z]{3}[0-9]{4}/)) {
