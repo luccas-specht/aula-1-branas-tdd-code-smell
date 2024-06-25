@@ -3,7 +3,7 @@ import { validateCpf } from '../src/validations/';
 test.each(['97456321558', '71428793860', '87748248800'])(
   'Deve testar se o cpf é válido %s',
   function (cpf: string) {
-    const isValid = validateCpf(cpf);
+    const isValid = validateCpf({ rawCpf: cpf });
     expect(isValid).toBe(true);
   }
 );
@@ -20,6 +20,6 @@ test.each([
   '12345678901234567890',
   '11111111111',
 ])('Deve testar se o cpf é inválido %s', function (cpf: any) {
-  const isValid = validateCpf(cpf);
+  const isValid = validateCpf({ rawCpf: cpf });
   expect(isValid).toBe(false);
 });

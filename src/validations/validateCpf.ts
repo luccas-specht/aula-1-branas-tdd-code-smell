@@ -2,7 +2,11 @@ const CPF_LENGTH = 11;
 const FACTOR_FIRST_DIGIT = 10;
 const FACTOR_SECOND_DIGIT = 11;
 
-export function validateCpf(rawCpf: string) {
+type Params = {
+  rawCpf: string;
+};
+
+export function validateCpf({ rawCpf }: Params) {
   if (typeof rawCpf !== 'string') return false;
 
   if (!rawCpf) return false;
