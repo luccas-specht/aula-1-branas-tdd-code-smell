@@ -1,6 +1,3 @@
-import crypto from 'crypto';
-import pgp from 'pg-promise';
-
 import {
   validateCarPlate,
   validateCpf,
@@ -8,77 +5,47 @@ import {
   validateName,
 } from './validations';
 
-const connection = pgp()('postgres://postgres:231123@localhost:5432/branas');
+import { signupRepository, databaseConnection } from './database';
 
 export async function signup(input: any): Promise<any> {
-  if (!validateName({ name: input.name })) {
-    return -3;
+  const { getConnection, finishConnection } = databaseConnection();
+  const { getUserByEmail, insertUserIntoDatabase } = signupRepository({
+    databaseConnection: getConnection(),
+  });
+
+  if (!validateCpf({ rawCpf: input.cpf })) {
+    return -1;
   }
 
   if (!validateEmail({ email: input.email })) {
     return -2;
   }
 
-  if (!validateCpf({ rawCpf: input.cpf })) {
-    return -1;
+  if (!validateName({ name: input.name })) {
+    return -3;
+  }
+
+  const account = await getUserByEmail(input.email);
+  if (account) {
+    return -4;
+  }
+
+  if (input.isDriver && !validateCarPlate({ plate: input.carPlate })) {
+    return -5;
   }
 
   try {
-    const id = crypto.randomUUID();
-
-    const [acc] = await connection.query(
-      'select * from cccat17.account where email = $1',
-      [input.email]
-    );
-
-    if (!acc) {
-      if (input.isDriver) {
-        if (validateCarPlate({ plate: input.carPlate })) {
-          await connection.query(
-            'insert into cccat17.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) values ($1, $2, $3, $4, $5, $6, $7)',
-            [
-              id,
-              input.name,
-              input.email,
-              input.cpf,
-              input.carPlate,
-              !!input.isPassenger,
-              !!input.isDriver,
-            ]
-          );
-
-          const obj = {
-            accountId: id,
-          };
-          return obj;
-        } else {
-          // invalid car plate
-          return -5;
-        }
-      } else {
-        await connection.query(
-          'insert into cccat17.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) values ($1, $2, $3, $4, $5, $6, $7)',
-          [
-            id,
-            input.name,
-            input.email,
-            input.cpf,
-            input.carPlate,
-            !!input.isPassenger,
-            !!input.isDriver,
-          ]
-        );
-
-        const obj = {
-          accountId: id,
-        };
-        return obj;
-      }
-    } else {
-      // already exists
-      return -4;
-    }
+    const account = {
+      name: input.name,
+      email: input.email,
+      cpf: input.cpf,
+      carPlate: input.carPlate,
+      isPassenger: input.isPassenger,
+      isDriver: input.isDriver,
+    };
+    const accountId = await insertUserIntoDatabase(account);
+    return { accountId };
   } finally {
-    await connection.$pool.end();
+    await finishConnection();
   }
 }

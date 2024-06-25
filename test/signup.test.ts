@@ -17,6 +17,8 @@ test('Should not insert driver user when email already exists', async () => {
 test('Should not insert driver user when name not matched', async () => {
   const input = {
     name: 'bob',
+    cpf: '97456321558',
+    email: 'luccassilva@gmail.com',
   };
 
   const response = await signup(input);
@@ -26,6 +28,7 @@ test('Should not insert driver user when name not matched', async () => {
 test('Should not insert driver user when email is invalid', async () => {
   const input = {
     name: 'Bob Singer',
+    cpf: '97456321558',
     email: 'bob1111',
   };
 
@@ -44,7 +47,9 @@ test('Should not insert driver user when cpf is invalid', async () => {
   expect(response).toEqual(-1);
 });
 
-test.skip('Should not insert driver user when car plate is invalid', async () => {
+/**
+ * 
+ * test.skip('Should not insert driver user when car plate is invalid', async () => {
   const input = {
     name: 'Luccas Specht',
     email: 'luccas@gmai123.com',
@@ -56,3 +61,6 @@ test.skip('Should not insert driver user when car plate is invalid', async () =>
   const response = await signup(input);
   expect(response).toEqual(-5);
 });
+
+ * 
+ */
